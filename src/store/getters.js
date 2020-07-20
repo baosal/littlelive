@@ -4,6 +4,23 @@ export default {
   listAlbum(state) {
     return state.listAlbum
   },
+  filteredListAlbum(state) {
+    return filterType => {
+      if (filterType) {
+        switch (filterType) {
+          case "loveincrease":
+            return _.orderBy(state.listAlbum, ['love'], ['desc']);
+          case "lovedecrease":
+            return _.orderBy(state.listAlbum, ['love'], ['asc'])
+          case "follow":
+            return _.filter(state.listAlbum, { 'follow': true })
+          case "unfollow":
+            return _.filter(state.listAlbum, { 'follow': false })
+        }
+      }
+      return state.listAlbum
+    }
+  },
   selectedAlbum(state) {
     return (albumID) => {
       return _.find(state.listAlbum, album => {

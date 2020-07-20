@@ -85,11 +85,11 @@
               <label class="label mr-4">Is this photo sensitive</label>
               <div class="control">
                 <label class="radio">
-                  <input v-modal ="imageModalData.sensitive" type="radio" name="rsvp" />
+                  <input v-model="imageModalData.sensitive" type="radio" name="rsvp" />
                   Yes
                 </label>
                 <label class="radio">
-                  <input :value="!imageModalData.sensitive" type="radio" name="rsvp" />
+                  <input value="!imageModalData.sensitive" type="radio" name="rsvp" />
                   No
                 </label>
                 <label class="radio" disabled>
@@ -157,7 +157,10 @@ export default {
     ...mapActions(["fetchAlbumDetail"]),
     ...mapMutations(["updateAlbumDetail", "updatePhotoDetail"]),
     follow: function() {
-      this.albumDetail.follow = !this.albumDetail.follow;
+      this.updateAlbumDetail({
+        id: this.albumDetail.id,
+        follow: !this.albumDetail.follow
+      });
     },
     toggleModal(photoID) {
       if (photoID)
@@ -180,8 +183,7 @@ export default {
   },
   created() {
     this.albumDetail = this.selectedAlbum(this.albumID);
-    if (!this.albumDetail.isNew) {
-      // isNew = album from create new
+    if (this.albumDetail.fetchNewData) {
       // Fetch fake data
       this.fetchAlbumDetail({
         imageCount: randomInt(20),

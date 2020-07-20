@@ -8,6 +8,9 @@ Vue.use(lodash)
 import faker from 'vue-faker'
 Vue.use(faker)
 
+import VueLazyload from 'vue-lazyload'
+Vue.use(VueLazyload)
+
 import store from './store'
 /* eslint-disable no-new */
 new Vue({

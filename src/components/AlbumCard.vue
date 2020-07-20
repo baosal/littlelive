@@ -2,7 +2,7 @@
   <div class="card hover-zoom mx-1">
     <div class="card-image cusor" @click="$emit('click')">
       <figure class="image is-4by3 has-place-holder-img">
-        <img :src="this.albumData.photo" style />
+        <img v-lazy="this.albumData.photo" style />
       </figure>
     </div>
     <div class="card-content">
@@ -28,25 +28,38 @@
   </div>
 </template>
 <script>
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "AlbumCard",
   props: {
-    albumData: { img: null, love: 0, follow: false }
+    albumID: null
   },
   computed: {
+    ...mapGetters(["selectedAlbum"]),
     detailTexts: function() {
-      return `Photos ${this.albumData.photoCount}, Videos ${this.albumData.videoCount}`;;
+      return `Photos ${this.albumData.photoCount}, Videos ${this.albumData.videoCount}`;
     }
   },
   data() {
-    return {};
+    return {
+      albumData: { photo: null, love: 0, follow: false }
+    };
   },
   methods: {
+    ...mapMutations(["updateAlbumDetail"]),
     follow: function() {
-      this.albumData.follow = !this.albumData.follow;
+      this.updateAlbumDetail({
+        id: this.albumID,
+        follow: !this.albumData.follow
+      });
     }
+    // async loadAlbumDetail () {
+    //   this.albumData = await
+    // }
   },
-  created() {}
+  created() {
+    this.albumData = this.selectedAlbum(this.albumID)
+  }
 };
 </script>
 <style>
@@ -68,11 +81,11 @@ img {
   text-overflow: ellipsis;
 }
 .hover-zoom:hover {
-	-webkit-transform: scale(1.1);
-	transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
 }
 .hover-zoom {
-	transition: .3s ease-in-out;
+  transition: 0.3s ease-in-out;
 }
 /* .has-place-holder-img {
     background-image: photo("https://picsum.photos/id/3/400");

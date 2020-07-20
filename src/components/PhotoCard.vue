@@ -2,7 +2,7 @@
   <div class="card mx-1 hover-zoom">
     <div class="card-image">
       <figure class="image is-4by3 has-place-holder-img">
-        <img :src="this.photo.photo" @click="openPhoto" class="cusor" />
+        <img v-lazy="this.photo.photo" @click="openPhoto" class="cusor" />
         <div class="column is-6 bottom-left has-text-left">
           <span class="icon has-text-danger">
             <i

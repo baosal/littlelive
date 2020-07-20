@@ -1,8 +1,6 @@
 <template>
   <div id="app">
     <AlbumDashBoard></AlbumDashBoard>
-    <!-- <img src="./assets/logo.png">
-    <router-view/>-->
   </div>
 </template>
 <script>

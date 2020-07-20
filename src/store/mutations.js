@@ -20,7 +20,7 @@ export default {
   },
   
   addAlbum(state, payload) {
-    let newAlbum = {isNew : true, follow: false, photoCount: 0, videoCount: 0, id: Vue.faker().random.uuid()}
+    let newAlbum = {fetchNewData : false, follow: false, photoCount: 0, videoCount: 0, id: Vue.faker().random.uuid()}
     Object.assign(newAlbum,payload)
     state.listAlbum.splice(0, 0, { ...newAlbum });
   },

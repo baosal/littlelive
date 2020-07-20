@@ -9,7 +9,7 @@ export default {
             result.push({
                 id: Vue.faker().random.uuid(),
                 name: Vue.faker().name.findName(),
-                isNew: false, // to differentiate Album we get from fake API or Album from create new
+                fetchNewData: true, // to differentiate Album we get from fake API or Album from create new
                 photo: `https://picsum.photos/id/${randomInt(500)}/1600`,
                 photoCount: randomInt(10),
                 videoCount: randomInt(10),
@@ -26,6 +26,7 @@ export default {
         for (let i = 0; i < params.imageCount; i++) {
             listPhoto.push({
                 id: Vue.faker().random.uuid(),
+                name: Vue.faker().name.findName(),
                 photo: `https://picsum.photos/id/${randomInt(500)}/1600`,
                 love: randomInt(5),
                 follow: Vue.faker().random.boolean()
@@ -33,6 +34,7 @@ export default {
         }
         let result = {
             id: params.id,
+            fetchNewData: false,
             content: Vue.faker().lorem.sentences(),
             updated: Vue.faker().date.past(),
             listPhoto: listPhoto
