@@ -1,6 +1,6 @@
 <template>
   <div class="tile is-vertical">
-    <div class="tile has-background-warning-light mx-1 mb-2">
+    <div class="tile has-background-warning-light mx-1 mb-4">
       <div class="tile is-parent">
         <div class="tile is-child is-10 has-text-left has-text-grey-dark">
           <p class="title text-overflow has-text-primary-dark">{{this.albumDetail.name}}</p>
@@ -54,9 +54,74 @@
         v-for="(photo, index) in this.albumDetail.listPhoto"
         :key="index"
       >
-        <PhotoCard :photoID="photo.id" :albumID="albumID"></PhotoCard>
+        <PhotoCard :photoID="photo.id" :albumID="albumID" @openModal="toggleModal"></PhotoCard>
         <!-- </div>
         </div>-->
+      </div>
+    </div>
+    <div class="modal" :class="[this.openModal ? 'is-active' : '']">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Image informations</p>
+          <button class="delete" @click="toggleModal()" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="content">
+            <div class="field">
+              <label class="field-label">Content</label>
+              <div class="control">
+                <input
+                  v-model="albumDetail.name"
+                  class="input is-success"
+                  type="text"
+                  placeholder="Text input"
+                  value="bulma"
+                />
+              </div>
+            </div>
+            <div class="field is-horizontal">
+              <label class="label mr-4">Public this photo</label>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="rsvp" />
+                  Yes
+                </label>
+                <label class="radio">
+                  <input type="radio" name="rsvp" />
+                  No
+                </label>
+                <label class="radio" disabled>
+                  <input type="radio" name="rsvp" disabled />
+                  Maybe
+                </label>
+              </div>
+            </div>
+            <div class="field is-horizontal">
+              <div class="field-label is-normal has-text-left">
+                <label class="label">Country</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input class="input" placeholder="Country" />
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="field has-text-left">
+              <label class="checkbox">
+                <input type="checkbox" />
+                I agree to public photo with
+                <a href="#">terms and conditions</a>
+              </label>
+            </div>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-success" @click="addAlbum(newAlbum); toggleModal()">Add</button>
+          <button class="button" @click="toggleModal()">Close</button>
+        </footer>
       </div>
     </div>
   </div>
@@ -82,13 +147,17 @@ export default {
   },
   data() {
     return {
-      albumDetail: {}
+      albumDetail: {},
+      openModal: false
     };
   },
   methods: {
-    ...mapActions(["fetchPhotoDashBoardDetail"]),
+    ...mapActions(["fetchAlbumDetail"]),
     follow: function() {
       this.albumDetail.follow = !this.albumDetail.follow;
+    },
+    toggleModal() {
+      this.openModal = !this.openModal;
     }
   },
   created() {
@@ -97,10 +166,10 @@ export default {
     });
     // Fetch more information of current photo dashboard
     if (this.albumDetail.listPhoto && this.albumDetail.listPhoto.length === 0) {
-      this.fetchPhotoDashBoardDetail({
+      this.fetchAlbumDetail({
         imageCount: randomInt(20),
         id: this.albumID
-      })
+      });
     }
   }
 };

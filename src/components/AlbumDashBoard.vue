@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-6">
+  <div class="mx-4">
     <div v-if="this.isShowAlbumDetail === false" class="bd-snippet bd-is-horizontal bd-is-3">
       <div class="bd-snippet-preview">
         <div class="tabs is-large is-boxed is-medium">

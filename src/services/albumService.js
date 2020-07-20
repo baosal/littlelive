@@ -20,24 +20,22 @@ export default {
         return result
     },
     // Get more informations of the album
-    async fetchPhotoDashBoardDetail(params) {
+    async fetchAlbumDetail(params) {
+        let listPhoto = []
+        for (let i = 0; i < params.imageCount; i++) {
+            listPhoto.push({
+                id: Vue.faker().random.uuid(),
+                photo: `https://picsum.photos/id/${randomInt(500)}/1600`,
+                love: randomInt(5),
+                follow: Vue.faker().random.boolean()
+            })
+        }
         let result = {
             id: params.id,
             content: Vue.faker().lorem.sentences(),
             listPhoto: [],
             date: Vue.faker().date.past(),
-            listPhoto: await this.fetchListPhotoInfo(params.imageCount)
-        }
-        return result
-    },
-    async fetchListPhotoInfo(imageCount) {
-        let result = []
-        for (let i = 0; i < imageCount; i++) {
-            result.push({
-                photo: `https://picsum.photos/id/${randomInt(500)}/1600`,
-                love: randomInt(5),
-                follow: Vue.faker().random.boolean()
-            })
+            listPhoto: listPhoto
         }
         return result
     },
@@ -46,8 +44,8 @@ export default {
         let result = {
             content: Vue.faker().lorem.sentences(),
             public: Vue.faker().random.boolean(),
-            createdBy: Vue.faker().name.findName(),
-            location: Vue.faker().address.city()
+            location: Vue.faker().address.city(),
+            agree: Vue.faker().random.boolean(),
         }
         return result
     }

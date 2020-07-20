@@ -1,16 +1,16 @@
 <template>
-  <div class="card mx-1 hover-zoom cusor">
+  <div class="card mx-1 hover-zoom cusor" @click="$emit('openModal')">
     <div class="card-image">
       <figure class="image is-4by3 has-place-holder-img">
-        <img :src="this.photoDetail.photo" />
+        <img :src="this.photo.photo" />
         <div class="column is-6 bottom-left has-text-left">
           <span class="icon has-text-danger">
             <i @click="makeLove()" class="fas fa-heart cusor mr-1" aria-hidden="true"></i>
-            <p class="has-text-info-light">{{this.love}}</p>
+            <p class="has-text-info-light">{{this.photo.love}}</p>
           </span>
         </div>
         <div class="column is-6 bottom-right has-text-right">
-          <span v-if="this.photoDetail.follow" class="icon has-text-warning">
+          <span v-if="this.photo.follow" class="icon has-text-warning">
             <i @click="follow()" class="fas fa-star cusor mr-1" aria-hidden="true"></i>
           </span>
           <span v-else class="icon has-text-warning">
@@ -22,7 +22,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "PhotoCard",
   props: {
@@ -30,28 +30,37 @@ export default {
     albumID: null
   },
   computed: {
-    ...mapGetters(["listAlbum"])
+    ...mapGetters(["listAlbum", "selectedPhoto"])
   },
   data() {
     return {
       photo: {}
-    };
+    }
   },
   methods: {
     ...mapActions(["fetchPhotoDetail"]),
+    ...mapMutations(["updateAlbumLoveCount", "updatePhotoLoveCount"]),
     makeLove: function() {
-      this.photo.love += 1;
+      this.updatePhotoLoveCount({
+        photoID: this.photoID,
+        albumID: this.albumID
+      });
+      this.updateAlbumLoveCount(this.albumID);
     },
     follow: function() {
-      this.photoDetail.follow = !this.photoDetail.follow;
+      this.photo.follow = !this.photo.follow;
     }
   },
   created() {
-
+    this.fetchPhotoDetail({ photoID: this.photoID, albumID: this.albumID });
+    this.photo = this.selectedPhoto(this.photoID, this.albumID);
   }
 };
 </script>
 <style>
+img {
+  border-radius: 10px;
+}
 .cusor {
   cursor: pointer;
 }

@@ -9,9 +9,9 @@ export default {
       throw new Error(e.message || e)
     }
   },
-  async fetchPhotoDashBoardDetail({ commit }, params) {
+  async fetchAlbumDetail({ commit }, params) {
     try {
-      const result = await albumService.fetchPhotoDashBoardDetail(params)
+      const result = await albumService.fetchAlbumDetail(params)
       let data = result || {}
       commit('updateAlbumDetail', data)
     } catch (e) {
@@ -22,7 +22,7 @@ export default {
     try {
       const result = await albumService.fetchPhotoDetail(params)
       let data = result || {}
-      commit('updatePhotoDetail', data)
+      commit('updatePhotoDetail', {data, params})
     } catch (e) {
       throw new Error(e.message || e)
     }

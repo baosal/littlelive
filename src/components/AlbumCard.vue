@@ -60,6 +60,12 @@ export default {
 };
 </script>
 <style>
+.card {
+  border-radius: 15px;
+}
+img {
+  border-radius: 15px 15px 0 0;
+}
 .cusor {
   cursor: pointer;
 }
