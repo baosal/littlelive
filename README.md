@@ -11,7 +11,8 @@ npm install
 # serve with hot reload at localhost:8080
 npm run dev
 
-Some addition feature :
-- Increase number of love of each photo will increase album number of love
-- Allow sort album by number of love
-- Allow filter album by follow
+# Some addition feature :
+# - Allow sort album by number of love
+# - Allow filter album by follow
+# - Increase love's number of each photo will increase the love's number of album, this also affect search and filter album right away
+

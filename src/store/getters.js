@@ -9,9 +9,9 @@ export default {
       if (filterType) {
         switch (filterType) {
           case "loveincrease":
-            return _.orderBy(state.listAlbum, ['love'], ['desc']);
+            return _.orderBy(state.listAlbum, ['love'], ['asc']);
           case "lovedecrease":
-            return _.orderBy(state.listAlbum, ['love'], ['asc'])
+            return _.orderBy(state.listAlbum, ['love'], ['desc'])
           case "follow":
             return _.filter(state.listAlbum, { 'follow': true })
           case "unfollow":

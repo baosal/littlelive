@@ -67,7 +67,7 @@ export default {
   border-radius: 15px;
 }
 img {
-  border-radius: 15px 15px 0 0;
+  border-radius: 15px 15px 0 0 !important;
 }
 .cusor {
   cursor: pointer;
