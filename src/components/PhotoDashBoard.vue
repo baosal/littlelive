@@ -4,7 +4,7 @@
       <div class="tile is-parent">
         <div class="tile is-child is-10 has-text-left has-text-grey-dark">
           <p class="title text-overflow has-text-primary-dark">{{this.albumDetail.name}}</p>
-          <p class="subtitle has-text-grey-dark">{{this.albumDetail.date}}</p>
+          <p class="subtitle has-text-grey-dark">{{this.albumDetail.updated}}</p>
           <p class>{{this.albumDetail.content}}</p>
         </div>
         <div class="tile is-child">
@@ -43,27 +43,28 @@
       </div>
       <button class="delete is-large has-background-danger-dark" @click="$emit('closeAlbumDetail')"></button>
     </div>
-    <!-- <div class="bd-snippet-preview">
-    <div class="bd-snippet-code highlight-full bd-is-more bd-is-more-clipped">-->
     <div class="columns is-multiline">
       <div class="column is-one-quarter">
-        <AddCard type="photo" :parentID="this.albumDetail.id"></AddCard>
+        <AddCard type="photo" :albumID="this.albumDetail.id"></AddCard>
       </div>
       <div
         class="column is-one-quarter"
-        v-for="(photo, index) in this.albumDetail.listPhoto"
-        :key="index"
+        v-for="photo in this.albumDetail.listPhoto"
+        :key="photo.id"
       >
-        <PhotoCard :photoID="photo.id" :albumID="albumID" @openModal="toggleModal"></PhotoCard>
-        <!-- </div>
-        </div>-->
+        <PhotoCard
+          :photoID="photo.id"
+          :albumID="albumID"
+          @openModal="toggleModal"
+          @makeLove="updateLoveCount"
+        ></PhotoCard>
       </div>
     </div>
     <div class="modal" :class="[this.openModal ? 'is-active' : '']">
       <div class="modal-background"></div>
       <div class="modal-card">
         <header class="modal-card-head">
-          <p class="modal-card-title">Image informations</p>
+          <p class="modal-card-title">Image {{this.imageModalData.name}}'s informations</p>
           <button class="delete" @click="toggleModal()" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
@@ -72,7 +73,7 @@
               <label class="field-label">Content</label>
               <div class="control">
                 <input
-                  v-model="albumDetail.name"
+                  v-model="imageModalData.content"
                   class="input is-success"
                   type="text"
                   placeholder="Text input"
@@ -81,14 +82,14 @@
               </div>
             </div>
             <div class="field is-horizontal">
-              <label class="label mr-4">Public this photo</label>
+              <label class="label mr-4">Is this photo sensitive</label>
               <div class="control">
                 <label class="radio">
-                  <input type="radio" name="rsvp" />
+                  <input v-modal ="imageModalData.sensitive" type="radio" name="rsvp" />
                   Yes
                 </label>
                 <label class="radio">
-                  <input type="radio" name="rsvp" />
+                  <input :value="!imageModalData.sensitive" type="radio" name="rsvp" />
                   No
                 </label>
                 <label class="radio" disabled>
@@ -99,19 +100,19 @@
             </div>
             <div class="field is-horizontal">
               <div class="field-label is-normal has-text-left">
-                <label class="label">Country</label>
+                <label class="label">Localtion</label>
               </div>
               <div class="field-body">
                 <div class="field">
                   <p class="control">
-                    <input class="input" placeholder="Country" />
+                    <input class="input" v-model="imageModalData.location" placeholder="localtion" />
                   </p>
                 </div>
               </div>
             </div>
             <div class="field has-text-left">
               <label class="checkbox">
-                <input type="checkbox" />
+                <input v-model="imageModalData.public" type="checkbox" />
                 I agree to public photo with
                 <a href="#">terms and conditions</a>
               </label>
@@ -119,7 +120,7 @@
           </div>
         </section>
         <footer class="modal-card-foot">
-          <button class="button is-success" @click="addAlbum(newAlbum); toggleModal()">Add</button>
+          <button class="button is-success" @click="updatePhoto(); toggleModal()">Save</button>
           <button class="button" @click="toggleModal()">Close</button>
         </footer>
       </div>
@@ -129,7 +130,7 @@
 <script>
 import PhotoCard from "./PhotoCard";
 import AddCard from "./AddCard";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import { randomInt } from "@/common";
 import _ from "lodash";
 
@@ -140,7 +141,7 @@ export default {
     AddCard
   },
   computed: {
-    ...mapGetters(["listAlbum"])
+    ...mapGetters(["listAlbum", "selectedAlbum", "selectedPhoto"])
   },
   props: {
     albumID: null
@@ -148,24 +149,40 @@ export default {
   data() {
     return {
       albumDetail: {},
+      imageModalData: {},
       openModal: false
     };
   },
   methods: {
     ...mapActions(["fetchAlbumDetail"]),
+    ...mapMutations(["updateAlbumDetail", "updatePhotoDetail"]),
     follow: function() {
       this.albumDetail.follow = !this.albumDetail.follow;
     },
-    toggleModal() {
+    toggleModal(photoID) {
+      if (photoID)
+        this.imageModalData = this.selectedPhoto(photoID, this.albumID);
       this.openModal = !this.openModal;
+    },
+    updatePhoto() {
+      this.updatePhotoDetail({
+        ...this.imageModalData,
+        photoID: this.imageModalData.id,
+        albumID: this.albumDetail.id
+      });
+    },
+    updateLoveCount() {
+      this.updateAlbumDetail({
+        id: this.albumDetail.id,
+        love: this.albumDetail.love + 1
+      });
     }
   },
   created() {
-    this.albumDetail = _.find(this.listAlbum, album => {
-      return album.id === this.albumID;
-    });
-    // Fetch more information of current photo dashboard
-    if (this.albumDetail.listPhoto && this.albumDetail.listPhoto.length === 0) {
+    this.albumDetail = this.selectedAlbum(this.albumID);
+    if (!this.albumDetail.isNew) {
+      // isNew = album from create new
+      // Fetch fake data
       this.fetchAlbumDetail({
         imageCount: randomInt(20),
         id: this.albumID

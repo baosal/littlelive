@@ -11,7 +11,7 @@
     <div class="card-content">
       <p>{{this.detailTexts}}</p>
     </div>
-    <div class="modal" :class="[this.addNewAlbum ? 'is-active' : '']">
+    <div class="modal" :class="[this.openNewAlbumModal ? 'is-active' : '']">
       <div class="modal-background"></div>
       <div class="modal-card">
         <header class="modal-card-head">
@@ -52,7 +52,7 @@
         </footer>
       </div>
     </div>
-    <div class="modal" :class="[this.addNewPhoto ? 'is-active' : '']">
+    <div class="modal" :class="[this.openNewPhotoModal ? 'is-active' : '']">
       <div class="modal-background"></div>
       <div class="modal-card">
         <header class="modal-card-head">
@@ -61,6 +61,18 @@
         </header>
         <section class="modal-card-body">
           <div class="content">
+            <div class="field">
+              <label class="label">Photo name</label>
+              <div class="control">
+                <input
+                  v-model="newPhoto.name"
+                  class="input is-success"
+                  type="text"
+                  placeholder="Text input"
+                  value="bulma"
+                />
+              </div>
+            </div>
             <div class="file has-name is-fullwidth">
               <label class="file-label">
                 <input @change="handleUploadImg" class="file-input" type="file" accept="image/*" />
@@ -76,7 +88,7 @@
           </div>
         </section>
         <footer class="modal-card-foot">
-          <button class="button is-success" @click="addAlbum(newAlbum); toggleModal()">Add</button>
+          <button class="button is-success" @click="addPhoto({albumID: albumID,data: newPhoto}); toggleModal()">Add</button>
           <button class="button" @click="toggleModal()">Close</button>
         </footer>
       </div>
@@ -89,7 +101,7 @@ import Vue from "vue";
 export default {
   name: "AddCard",
   props: {
-    parentID: null,
+    albumID: null,
     type: null
   },
   computed: {
@@ -99,8 +111,8 @@ export default {
   },
   data() {
     return {
-      addNewAlbum: false,
-      addNewPhoto: false,
+      openNewAlbumModal: false,
+      openNewPhotoModal: false,
       newAlbum: {
         id: Vue.faker().random.uuid(),
         name: null,
@@ -117,9 +129,9 @@ export default {
     ...mapMutations(["addAlbum", "addPhoto"]),
     toggleModal() {
       if (this.type == "album") {
-        this.addNewAlbum = !this.addNewAlbum;
+        this.openNewAlbumModal = !this.openNewAlbumModal;
       } else {
-        this.addNewPhoto = !this.addNewPhoto;
+        this.openNewPhotoModal = !this.openNewPhotoModal;
       }
     },
     handleUploadImg(e) {

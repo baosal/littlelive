@@ -22,7 +22,7 @@ export default {
     try {
       const result = await albumService.fetchPhotoDetail(params)
       let data = result || {}
-      commit('updatePhotoDetail', {data, params})
+      commit('updatePhotoDetail', {data, ...params})
     } catch (e) {
       throw new Error(e.message || e)
     }

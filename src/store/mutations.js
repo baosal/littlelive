@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import getters from './getters'
+import Vue from 'vue'
 export default {
   updateListAlbum(state, payload) {
     state.listAlbum = payload
@@ -7,38 +8,27 @@ export default {
 
   updateAlbumDetail(state, payload) {
     let album = getters.selectedAlbum(state)(payload.id)
-    album.content = payload.content
-    album.listPhoto = payload.listPhoto
-    album.date = new Date()
-  },
-
-  updateAlbumLoveCount(state, albumID) {
-    let album = getters.selectedAlbum(state)(albumID)
-    album.love += 1
-  },
-  
-  updatePhotoLoveCount(state, payload) {
-    let photo = getters.selectedPhoto(state)(payload.photoID, payload.albumID)
-    photo.love += 1
+    // //prevent album content is change after fetch new data from fake API, remove this line in real project
+    // payload.content = album.content ? album.content :  payload.content
+    Object.assign(album, payload)
   },
   
   updatePhotoDetail(state, payload) {
-    let photo = getters.selectedPhoto(state)(payload.params.photoID, payload.params.albumID)
-    photo.content = payload.data.content
-    photo.public = payload.data.public
-    photo.createdBy = payload.data.createdBy
-    photo.location = payload.data.location
-    photo.date = new Date()
+    let photo = getters.selectedPhoto(state)(payload.photoID, payload.albumID)
+    photo.updated = new Date()
+    Object.assign(photo, payload.data)
   },
   
   addAlbum(state, payload) {
-    let newAlbum = _.cloneDeep(state.listAlbum[0])
-    newAlbum = {...newAlbum,...payload}
+    let newAlbum = {isNew : true, follow: false, photoCount: 0, videoCount: 0, id: Vue.faker().random.uuid()}
+    Object.assign(newAlbum,payload)
     state.listAlbum.splice(0, 0, { ...newAlbum });
   },
 
   addPhoto(state, payload) {
-    let parentAlbum = _.find(state.listAlbum, album => { return album.id === payload.parentID })
-    parentAlbum.listPhoto.splice(0, 0, { ...payload.data });
+    let newPhoto = {love: 0, follow: false, id: Vue.faker().random.uuid()}
+    Object.assign(newPhoto, payload.data)
+    let album = getters.selectedAlbum(state)(payload.albumID)
+    album.listPhoto.splice(0, 0, { ...newPhoto });
   },
 }

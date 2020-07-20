@@ -1,11 +1,15 @@
 <template>
-  <div class="card mx-1 hover-zoom cusor" @click="$emit('openModal')">
+  <div class="card mx-1 hover-zoom">
     <div class="card-image">
       <figure class="image is-4by3 has-place-holder-img">
-        <img :src="this.photo.photo" />
+        <img :src="this.photo.photo" @click="openPhoto" class="cusor" />
         <div class="column is-6 bottom-left has-text-left">
           <span class="icon has-text-danger">
-            <i @click="makeLove()" class="fas fa-heart cusor mr-1" aria-hidden="true"></i>
+            <i
+              @click="seftLove(), $emit('makeLove')"
+              class="fas fa-heart cusor mr-1"
+              aria-hidden="true"
+            ></i>
             <p class="has-text-info-light">{{this.photo.love}}</p>
           </span>
         </div>
@@ -22,6 +26,7 @@
   </div>
 </template>
 <script>
+import _ from "lodash";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "PhotoCard",
@@ -35,24 +40,32 @@ export default {
   data() {
     return {
       photo: {}
-    }
+    };
   },
   methods: {
     ...mapActions(["fetchPhotoDetail"]),
-    ...mapMutations(["updateAlbumLoveCount", "updatePhotoLoveCount"]),
-    makeLove: function() {
-      this.updatePhotoLoveCount({
+    ...mapMutations(["updatePhotoDetail"]),
+    seftLove() {
+      this.updatePhotoDetail({
         photoID: this.photoID,
-        albumID: this.albumID
+        albumID: this.albumID,
+        data: { love: this.photo.love + 1 }
       });
-      this.updateAlbumLoveCount(this.albumID);
     },
-    follow: function() {
+    follow() {
       this.photo.follow = !this.photo.follow;
+    },
+    async openPhoto() {
+      // prevent data change because of new data get from fake API
+      if(_.isEmpty(this.photo)) {
+      // Fetch photo detail from API => update on Store => open modal
+        await this.fetchPhotoDetail({ photoID: this.photoID, albumID: this.albumID })
+      }
+      // Open modal of photo, allow edit information
+      this.$emit("openModal", this.photoID);
     }
   },
   created() {
-    this.fetchPhotoDetail({ photoID: this.photoID, albumID: this.albumID });
     this.photo = this.selectedPhoto(this.photoID, this.albumID);
   }
 };

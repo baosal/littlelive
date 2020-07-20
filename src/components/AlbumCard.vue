@@ -35,17 +35,7 @@ export default {
   },
   computed: {
     detailTexts: function() {
-      let photoInfo =
-        this.albumData.photoCount > 0
-          ? `Photos ${this.albumData.photoCount}`
-          : "";
-      let videoInfo =
-        this.albumData.videoCount > 0
-          ? `Videos ${this.albumData.videoCount}`
-          : "";
-      let detailTexts =
-        videoInfo == "" ? photoInfo : `${photoInfo}, ${videoInfo}`;
-      return detailTexts;
+      return `Photos ${this.albumData.photoCount}, Videos ${this.albumData.videoCount}`;;
     }
   },
   data() {
